@@ -5,9 +5,13 @@ import json
 import os
 import ssl
 import requests
-ssl._create_default_https_context = ssl._create_unverified_context
-app = Flask(__name__)
+import urllib3
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
+app = Flask(__name__)
 # 建立題庫
 zh_ko_dict = {
     "你好": "안녕하세요",

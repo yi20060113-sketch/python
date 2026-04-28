@@ -45,34 +45,35 @@ def ask():
 
 @app.route('/stock', methods=['GET', 'POST'])
 def stock():
+    answer = ""
+    stock_no = ""
+
     if request.method == 'POST':
         stock_no = request.form.get('question', '').strip()
 
         if stock_no == "":
-            return render_template('stock.html', question="", answer="請輸入股票代號")
+            answer = "請輸入股票代號"
+            return render_template('stock.html', question=stock_no, answer=answer)
 
         url = f"https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&stockNo={stock_no}"
-    
-    try:
-        req = urllib.request.Request(url, headers={
-            "User-Agent": "Mozilla/5.0"
-        })
-    
-        with urllib.request.urlopen(req, timeout=10) as response:
-            data = json.loads(response.read().decode("utf-8"))
-    
+
+        try:
+            req = urllib.request.Request(url, headers={
+                "User-Agent": "Mozilla/5.0"
+            })
+
+            with urllib.request.urlopen(req, timeout=10) as response:
+                data = json.loads(response.read().decode("utf-8"))
+
             if data.get("stat") == "OK" and len(data.get("data", [])) > 0:
-                answer = data["data"][-1][6]
+                answer = "最新收盤價：" + data["data"][-1][6]
             else:
                 answer = "查無資料，請確認股票代號"
-    
-    except Exception as e:
-        answer = "系統錯誤：" + str(e)
 
-        return render_template('stock.html', question=stock_no, answer=answer)
+        except Exception as e:
+            answer = "系統錯誤：" + str(e)
 
-    return render_template('stock.html', question="", answer="")
-
+    return render_template('stock.html', question=stock_no, answer=answer)
     if __name__ == "__main__":
         port = int(os.environ.get("PORT", 5000))
         app.run(host="0.0.0.0", port=port)

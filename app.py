@@ -61,12 +61,12 @@ def stock():
         url = f"https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&stockNo={stock_no}"
 
         try:
-            req = urllib.request.Request(url, headers={
+            headers = {
                 "User-Agent": "Mozilla/5.0"
-            })
+            }
 
-            with urllib.request.urlopen(req, timeout=10) as response:
-                data = json.loads(response.read().decode("utf-8"))
+            response = requests.get(url, headers=headers, timeout=10, verify=False)
+            data = response.json()
 
             if data.get("stat") == "OK" and len(data.get("data", [])) > 0:
                 answer = "最新收盤價：" + data["data"][-1][6]

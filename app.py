@@ -53,10 +53,10 @@ def stock():
 
         url = f"https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&stockNo={stock_no}"
 
-       try:
-    req = urllib.request.Request(url, headers={
-        "User-Agent": "Mozilla/5.0"
-    })
+    try:
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0"
+        })
 
     with urllib.request.urlopen(req, timeout=10) as response:
         data = json.loads(response.read().decode("utf-8"))

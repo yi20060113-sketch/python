@@ -3,6 +3,9 @@ from flask import Flask, request, render_template
 import urllib.request
 import json
 import os
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
 app = Flask(__name__)
 
 # 建立題庫

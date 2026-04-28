@@ -4,7 +4,7 @@ import urllib.request
 import json
 import os
 import ssl
-
+import requests
 ssl._create_default_https_context = ssl._create_unverified_context
 app = Flask(__name__)
 
@@ -77,6 +77,8 @@ def stock():
             answer = "系統錯誤：" + str(e)
 
     return render_template('stock.html', question=stock_no, answer=answer)
+
+
     if __name__ == "__main__":
         port = int(os.environ.get("PORT", 5000))
         app.run(host="0.0.0.0", port=port)

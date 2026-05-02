@@ -68,7 +68,7 @@ def stock():
             headers = {
                 "User-Agent": "Mozilla/5.0"
             }
-    response = requests.get(url, headers=headers, timeout=10, verify=False)
+        response = requests.get(url, headers=headers, timeout=10, verify=False)
     
     if response.status_code != 200:
         raise Exception("API 連線失敗")

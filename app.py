@@ -45,49 +45,38 @@ def stock():
         if stock_no == "":
             return render_template('stock.html', result="請輸入股票代號")
 
-try:
-    url = f"https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_{stock_no}.tw"
+        try:
+            url = f"https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_{stock_no}.tw"
 
-    headers = {
-        "User-Agent": "Mozilla/5.0"
-    }
+            headers = {
+                "User-Agent": "Mozilla/5.0"
+            }
 
-    response = requests.get(url, headers=headers, timeout=10, verify=False)
+            response = requests.get(url, headers=headers, timeout=10, verify=False)
 
-    # 👉 🔥 加這段（超重要）
-    if not response.text.strip():
-        raise Exception("API 回傳空資料")
+            if not response.text.strip():
+                raise Exception("API 回傳空資料")
 
-    # 👉 🔥 保護 JSON 解析
-    try:
-        data = response.json()
-    except:
-        raise Exception("API 回傳格式錯誤（不是 JSON）")
+            data = response.json()
 
-    if "msgArray" in data and len(data["msgArray"]) > 0:
-        stock = data["msgArray"][0]
+            if "msgArray" in data and len(data["msgArray"]) > 0:
+                stock = data["msgArray"][0]
 
-        price = stock.get("z", "-")
+                result = {
+                    "name": stock.get("n", "未知"),
+                    "price": stock.get("z", "-"),
+                    "open": stock.get("o", "-"),
+                    "high": stock.get("h", "-"),
+                    "low": stock.get("l", "-"),
+                    "volume": stock.get("v", "-")
+                }
+            else:
+                result = "查無資料"
 
-        if price == "-" or price == "":
-            answer = "目前沒有成交價"
-        else:
-            answer = f"""
-公司：{stock.get("n","")}
-最新成交價：{price}
-開盤：{stock.get("o","-")}
-最高：{stock.get("h","-")}
-最低：{stock.get("l","-")}
-成交量：{stock.get("v","-")}
-"""
-    else:
-        answer = "查無資料"
-
-except Exception as e:
-    answer = "系統錯誤：" + str(e)
+        except Exception as e:
+            result = "系統錯誤：" + str(e)
 
     return render_template('stock.html', result=result, question=stock_no)
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

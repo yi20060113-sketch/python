@@ -8,7 +8,9 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app = Flask(__name__)
 
-# 🔤 字典資料
+@app.route('/')
+def index():
+    return render_template('index.html')
 zh_ko_dict = {
     "你好": "안녕하세요",
     "謝謝": "감사합니다",
@@ -23,13 +25,6 @@ zh_ko_dict = {
 }
 
 
-# 🏠 首頁
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
-# 🤖 字典功能
 @app.route('/ask', methods=['GET', 'POST'])
 def ask():
     if request.method == 'POST':
@@ -39,8 +34,6 @@ def ask():
 
     return render_template('ask.html', question="", answer="")
 
-
-# 📈 股票查詢
 @app.route('/stock', methods=['GET', 'POST'])
 def stock():
     result = None
@@ -53,6 +46,7 @@ def stock():
             return render_template('stock.html', result="請輸入股票代號")
 
         try:
+            # 🔥 使用穩定 API
             url = f"https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_{stock_no}.tw"
 
             headers = {
@@ -60,6 +54,7 @@ def stock():
             }
 
             response = requests.get(url, headers=headers, timeout=10, verify=False)
+
             data = response.json()
 
             if "msgArray" in data and len(data["msgArray"]) > 0:

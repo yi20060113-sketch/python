@@ -62,30 +62,30 @@ def stock():
             answer = "請輸入股票代號"
             return render_template('stock.html', question=stock_no, answer=answer)
 
-        url = f"https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&stockNo={stock_no}"
-
-        try:
-            headers = {
-                "User-Agent": "Mozilla/5.0"
-            }
+    url = f"https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_{stock_no}.tw"
+    
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0"
+        }
+    
         response = requests.get(url, headers=headers, timeout=10, verify=False)
     
-    if response.status_code != 200:
-        raise Exception("API 連線失敗")
+        if response.status_code != 200:
+            raise Exception("API 連線失敗")
     
-    data = response.json()
+        data = response.json()
     
-    if "msgArray" in data and len(data["msgArray"]) > 0:
-        price = data["msgArray"][0]["z"]  # 最新成交價
-        answer = "最新成交價：" + price
-    else:
-        answer = "查無資料"
-
-        except Exception as e:
-            answer = "系統錯誤：" + str(e)
-
+        if "msgArray" in data and len(data["msgArray"]) > 0:
+            price = data["msgArray"][0]["z"]
+            answer = "最新成交價：" + price
+        else:
+            answer = "查無資料"
+    
+    except Exception as e:
+        answer = "系統錯誤：" + str(e)
+    
     return render_template('stock.html', question=stock_no, answer=answer)
-
 
     if __name__ == "__main__":
         port = int(os.environ.get("PORT", 5000))
